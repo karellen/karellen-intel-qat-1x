@@ -1,0 +1,26 @@
+--- quickassist/build_system/build_files/OS/linux_2.6_kernel_space_rules.mk.bak   2024-02-16 16:22:06.632987112 -0500
++++ quickassist/build_system/build_files/OS/linux_2.6_kernel_space_rules.mk       2024-02-13 20:05:42.643062646 -0500
+@@ -72,7 +72,7 @@
+ 
+ $(LIB_STATIC): dirs
+        @echo 'Creating static library ${LIB_STATIC}'; \
+-       $(MAKE) -C $(KERNEL_SOURCE_ROOT)/ M=$(PWD) obj-m="" KBUILD_BUILTIN=1; \
++       $(MAKE) -C $(KERNEL_SOURCE_ROOT)/ M=$(PWD) obj-m="" KBUILD_BUILTIN=1 single-build=1; \
+        echo 'Copying outputs';\
+        test -f lib.a  &&  (ar -t lib.a | xargs ar -rcsD $(LIB_STATIC)); \
+        test -f $(LIB_STATIC)  &&  mv -f $(LIB_STATIC) $($(PROG_ACY)_FINAL_OUTPUT_DIR)/$(LIB_STATIC); \
+--- quickassist/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c.bak       2023-12-06 04:30:08.000000000 -0500
++++ quickassist/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c   2024-02-13 17:42:08.511594415 -0500
+@@ -671,10 +671,10 @@
+                /* if there is only one physical processor don't need
+                 * to do any further calculations
+                 */
+-               if (c->phys_proc_id == 0) {
++               if (c->topo.pkg_id == 0) {
+                        node_id = 0;
+                } else {
+-                       bus_per_cpu = MAX_PCI_BUS / (c->phys_proc_id + 1);
++                       bus_per_cpu = MAX_PCI_BUS / (c->topo.pkg_id + 1);
+                        if (bus_per_cpu != 0)
+                                node_id = pdev->bus->number / bus_per_cpu;
+                }
